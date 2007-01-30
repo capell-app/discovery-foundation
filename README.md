@@ -125,6 +125,7 @@ Docs gap: add `docs/screenshots.json` before promoting this package with visual 
 
 - [Package docs](docs/README.md)
 - [Overview](docs/overview.md)
+- [Worked extension examples](docs/extension-contracts.md)
 - [Troubleshooting](#troubleshooting)
 - [Screenshot contract](docs/screenshots.json)
 - [Capell content language plan](../../docs/CONTENT_LANGUAGE_PLAN.md)
