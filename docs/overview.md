@@ -41,14 +41,49 @@ Docs gap: add `docs/screenshots.json` before promoting this package with visual 
 
 ## Technical Shape
 
-- Service providers: `Capell\DiscoveryFoundation\Providers\DiscoveryFoundationServiceProvider`.
-- Extension contracts: `PublicUrlContributor`.
-- Actions: `BuildPublicUrlRegistryAction`, `DiscoverPublicPagesAction`, `NormalizeSearchTextAction`, `NormalizeTextAction`, `ReplacePhraseAction`, `ResolveTypoCorrectionAction`, `ScorePublicUrlCandidateAction`.
-- Data objects: `DiscoverablePageData`, `PublicUrlCandidateScoreData`, `PublicUrlData`, `PublicUrlRegistryEntryData`.
-- Manifest action API: `buildPublicUrlRegistry: Capell\DiscoveryFoundation\Actions\BuildPublicUrlRegistryAction`, `discoverPublicPages: Capell\DiscoveryFoundation\Actions\DiscoverPublicPagesAction`, `replacePhrase: Capell\DiscoveryFoundation\Actions\ReplacePhraseAction`.
-- Manifest contributions: `health-check: Capell\DiscoveryFoundation\Health\DiscoveryFoundationHealthCheck`.
-- Health checks: `Capell\DiscoveryFoundation\Health\DiscoveryFoundationHealthCheck`.
-- Cache tags: `discovery-foundation`.
+### Service providers
+
+- `Capell\DiscoveryFoundation\Providers\DiscoveryFoundationServiceProvider`
+
+### Extension contracts
+
+- `PublicUrlContributor`
+
+### Actions
+
+- `BuildPublicUrlRegistryAction`
+- `DiscoverPublicPagesAction`
+- `NormalizeSearchTextAction`
+- `NormalizeTextAction`
+- `ReplacePhraseAction`
+- `ResolveTypoCorrectionAction`
+- `ScorePublicUrlCandidateAction`
+
+### Data objects
+
+- `DiscoverablePageData`
+- `PublicUrlCandidateScoreData`
+- `PublicUrlData`
+- `PublicUrlRegistryEntryData`
+
+### Manifest action API
+
+- `buildPublicUrlRegistry: Capell\DiscoveryFoundation\Actions\BuildPublicUrlRegistryAction`
+- `discoverPublicPages: Capell\DiscoveryFoundation\Actions\DiscoverPublicPagesAction`
+- `replacePhrase: Capell\DiscoveryFoundation\Actions\ReplacePhraseAction`
+
+### Manifest contributions
+
+- `health-check: Capell\DiscoveryFoundation\Health\DiscoveryFoundationHealthCheck`
+
+### Health checks
+
+- `Capell\DiscoveryFoundation\Health\DiscoveryFoundationHealthCheck`
+
+### Cache tags
+
+- `discovery-foundation`
+
 
 ## Data Model
 
@@ -61,7 +96,7 @@ Docs gap: add `docs/screenshots.json` before promoting this package with visual 
 - Required packages: `capell-app/core`.
 - Admin navigation: no admin page or resource contribution is declared.
 - Admin/editor extensions: none declared.
-- Permissions: none declared in `capell.json`.
+- Permissions: no package permission declarations or Shield gates detected; host access rules still apply.
 - Public routes: none declared.
 - Database changes: no package migrations declared.
 - Config: no package config files.
@@ -84,8 +119,7 @@ Docs gap: add `docs/screenshots.json` before promoting this package with visual 
 ## Quick Start
 
 1. Install the package: `composer require capell-app/discovery-foundation`.
-2. No package-specific setup command or migrations are declared.
-3. Verify the package provider and manifest contributions are registered in the host app.
+2. Verify the package provider and manifest contributions are registered in the host app.
 
 ## Next Steps
 
