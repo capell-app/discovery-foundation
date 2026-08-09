@@ -1,0 +1,9 @@
+{
+    "package": "discovery-foundation",
+    "composerName": "capell-app/discovery-foundation",
+    "generatedFor": "deployment-screenshot-runner",
+    "requiresInstalledPackage": true,
+    "outputDirectory": "packages/discovery-foundation/docs/screenshots",
+    "entries": [],
+    "notes": "Authentic diagnostics and registry captures are deferred until the package can be installed in a clean host application."
+}

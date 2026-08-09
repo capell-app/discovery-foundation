@@ -1,0 +1,34 @@
+{
+    "whatThisPluginAdds": {
+        "text": "Discovery Foundation provides the shared public URL registry and deterministic matching primitives used by Capell discovery features.",
+        "evidence": [
+            "src/Actions/BuildPublicUrlRegistryAction.php",
+            "src/Actions/ScorePublicUrlCandidateAction.php",
+            "src/Contracts/PublicUrlContributor.php"
+        ]
+    },
+    "surfaceOutcome": {
+        "text": "First-party packages can contribute scoped, indexable URLs without duplicating registry or text-matching logic.",
+        "evidence": [
+            "src/Health/DiscoveryFoundationHealthCheck.php",
+                "src/Actions/DiscoverPublicPagesAction.php",
+            "tests/Integration/Actions/BuildPublicUrlRegistryActionTest.php"
+        ]
+    },
+    "whyItMatters": {
+        "developers": {
+            "text": "Typed contracts keep URL discovery neutral while compatibility shims let existing Site Discovery consumers migrate across the current major version.",
+            "evidence": [
+                "src/Data/PublicUrlRegistryEntryData.php",
+                "src/Contracts/PublicUrlContributor.php"
+            ]
+        },
+        "teams": {
+            "text": "Teams get consistent sitemap, search, SEO, and 404 discovery inputs without analytics, AI calls, or public authoring data.",
+            "evidence": [
+                "src/Actions/BuildPublicUrlRegistryAction.php",
+                "src/Providers/DiscoveryFoundationServiceProvider.php"
+            ]
+        }
+    }
+}

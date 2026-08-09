@@ -1,0 +1,55 @@
+name: Forward package PR to monorepo
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, edited, closed]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  forward:
+    if: github.repository_owner == 'capell-app' && github.event.repository.name != 'capell-packages'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.SPLIT_PR_FORWARD_TOKEN || secrets.ACCESS_TOKEN }}
+      PACKAGE_NAME: ${{ github.event.repository.name }}
+      SOURCE_PR_NUMBER: ${{ github.event.pull_request.number }}
+      SOURCE_PR_SHA: ${{ github.event.pull_request.head.sha }}
+      MONOREPO_REPOSITORY: capell-app/capell-packages
+    steps:
+      - name: Validate forwarding token
+        run: test -n "${GH_TOKEN}"
+      - name: Checkout split PR
+        if: github.event.action != 'closed'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SOURCE_PR_SHA }}
+          path: split
+          persist-credentials: false
+      - name: Checkout monorepo
+        if: github.event.action != 'closed'
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.MONOREPO_REPOSITORY }}
+          ref: main
+          token: ${{ env.GH_TOKEN }}
+          path: monorepo
+      - name: Forward package contents
+        if: github.event.action != 'closed'
+        run: |
+          set -euo pipefail
+          cd monorepo
+          branch="split-pr/${PACKAGE_NAME}/${SOURCE_PR_NUMBER}"
+          git checkout -B "${branch}"
+          rm -rf "packages/${PACKAGE_NAME}"
+          mkdir -p "packages/${PACKAGE_NAME}"
+          rsync -a --delete --exclude '.git' "../split/" "packages/${PACKAGE_NAME}/"
+          git add "packages/${PACKAGE_NAME}"
+          git diff --cached --quiet && exit 0
+          git config user.name capell-app
+          git config user.email appcapello@gmail.com
+          git commit -m "Forward ${PACKAGE_NAME} split PR #${SOURCE_PR_NUMBER}"
+          git push origin "${branch}" --force-with-lease

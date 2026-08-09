@@ -1,0 +1,104 @@
+{
+    "manifest-version": 3,
+    "name": "capell-app/discovery-foundation",
+    "slug": "discovery-foundation",
+    "displayName": "Discovery Foundation",
+    "kind": "package",
+    "capellApiVersion": "^1.0",
+    "version": "1.0.0",
+    "description": "A free shared public URL registry and deterministic matching foundation for Capell discovery features.",
+    "product": {
+        "group": "Capell Foundation",
+        "tier": "free",
+        "bundle": "foundation"
+    },
+    "namespace": "Capell\\DiscoveryFoundation",
+    "surfaces": ["shared"],
+    "dependencies": {
+        "requires": ["capell-app/core"],
+        "supports": [],
+        "conflicts": []
+    },
+    "providers": {
+        "metadata": [],
+        "install": [],
+        "runtime": ["Capell\\DiscoveryFoundation\\Providers\\DiscoveryFoundationServiceProvider"],
+        "admin": [],
+        "frontend": []
+    },
+    "contributes": [
+        {
+            "type": "health-check",
+            "class": "Capell\\DiscoveryFoundation\\Health\\DiscoveryFoundationHealthCheck"
+        }
+    ],
+    "database": {
+        "migrationGroup": "foundation",
+        "migrations": false,
+        "settings": false,
+        "requiredTables": ["pages", "sites", "site_domains"]
+    },
+    "commands": {"install": null, "setup": null, "demo": null, "doctor": null},
+    "actions": {
+        "buildPublicUrlRegistry": "Capell\\DiscoveryFoundation\\Actions\\BuildPublicUrlRegistryAction",
+        "discoverPublicPages": "Capell\\DiscoveryFoundation\\Actions\\DiscoverPublicPagesAction",
+        "replacePhrase": "Capell\\DiscoveryFoundation\\Actions\\ReplacePhraseAction"
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": ["public-url-registry", "discovery-matching"],
+    "security": {
+        "riskTier": "low",
+        "publicSurface": {
+            "routeNames": [],
+            "auth": "none",
+            "csrfExemptRoutes": [],
+            "signedRoutes": [],
+            "tokenizedRoutes": [],
+            "webhookRoutes": [],
+            "throttledRoutes": []
+        },
+        "sensitiveData": {
+            "encryptedFields": [],
+            "hashedTokenFields": [],
+            "redactedOutputClasses": [],
+            "plaintextJustifications": []
+        },
+        "publicOutput": {
+            "cacheSafe": true,
+            "forbidAuthoringSurface": true,
+            "forbidSecrets": true,
+            "forbidPublicBladeQueries": true
+        },
+        "externalHttpClients": {"requiresTimeouts": false, "requiresSecretRedaction": false, "clients": []},
+        "adminSurface": {"authorization": "none", "permissions": []}
+    },
+    "performance": {
+        "frontendRenderBudgetMs": 20,
+        "adminQueryBudget": 20,
+        "cacheTags": ["discovery-foundation"],
+        "cacheSafety": {"cacheable": false, "variesBy": ["site", "locale"], "sensitiveOutput": false, "invalidationSources": [], "queueInvalidation": false}
+    },
+    "healthChecks": [
+        {
+            "key": "discovery-foundation.public-url-contributors",
+            "label": "Discovery Foundation public URL contributors are registered.",
+            "class": "Capell\\DiscoveryFoundation\\Health\\DiscoveryFoundationHealthCheck",
+            "severity": "critical",
+            "surface": "shared"
+        }
+    ],
+    "commercial": {
+        "proposedLicense": "free",
+        "requestedCertification": "first-party",
+        "supportPolicy": "capell-first-party",
+        "privateDocsRequested": false
+    },
+    "marketplace": {
+        "summary": "Shared public URL registry and deterministic discovery matching for Capell.",
+        "description": "Discovery Foundation provides the neutral public URL registry used by sitemaps, search, SEO, and Smart 404. It scopes URLs by site and language, keeps noindex state authoritative, and exposes deterministic text matching without a database, analytics, or external service.",
+        "screenshots": [],
+        "categories": ["foundation", "search-seo"]
+    },
+    "contributionTraceability": {"deferredContributions": []}
+}
