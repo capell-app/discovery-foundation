@@ -22,7 +22,9 @@
     "providers": {
         "metadata": [],
         "install": [],
-        "runtime": ["Capell\\DiscoveryFoundation\\Providers\\DiscoveryFoundationServiceProvider"],
+        "runtime": [
+            "Capell\\DiscoveryFoundation\\Providers\\DiscoveryFoundationServiceProvider"
+        ],
         "admin": [],
         "frontend": []
     },
@@ -38,7 +40,12 @@
         "settings": false,
         "requiredTables": ["pages", "sites", "site_domains"]
     },
-    "commands": {"install": null, "setup": null, "demo": null, "doctor": null},
+    "commands": {
+        "install": null,
+        "setup": null,
+        "demo": null,
+        "doctor": null
+    },
     "actions": {
         "buildPublicUrlRegistry": "Capell\\DiscoveryFoundation\\Actions\\BuildPublicUrlRegistryAction",
         "discoverPublicPages": "Capell\\DiscoveryFoundation\\Actions\\DiscoverPublicPagesAction",
@@ -70,14 +77,27 @@
             "forbidSecrets": true,
             "forbidPublicBladeQueries": true
         },
-        "externalHttpClients": {"requiresTimeouts": false, "requiresSecretRedaction": false, "clients": []},
-        "adminSurface": {"authorization": "none", "permissions": []}
+        "externalHttpClients": {
+            "requiresTimeouts": false,
+            "requiresSecretRedaction": false,
+            "clients": []
+        },
+        "adminSurface": {
+            "authorization": "none",
+            "permissions": []
+        }
     },
     "performance": {
         "frontendRenderBudgetMs": 20,
         "adminQueryBudget": 20,
         "cacheTags": ["discovery-foundation"],
-        "cacheSafety": {"cacheable": false, "variesBy": ["site", "locale"], "sensitiveOutput": false, "invalidationSources": [], "queueInvalidation": false}
+        "cacheSafety": {
+            "cacheable": false,
+            "variesBy": ["site", "locale"],
+            "sensitiveOutput": false,
+            "invalidationSources": [],
+            "queueInvalidation": false
+        }
     },
     "healthChecks": [
         {
@@ -100,5 +120,5 @@
         "screenshots": [],
         "categories": ["foundation", "search-seo"]
     },
-    "contributionTraceability": {"deferredContributions": []}
+    "contributionTraceability": { "deferredContributions": [] }
 }

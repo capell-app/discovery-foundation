@@ -40,7 +40,12 @@
     },
     "prefer-stable": true,
     "homepage": "https://docs.capell.app/packages/discovery-foundation",
-    "keywords": ["capell", "discovery", "url-registry", "cms"],
+    "keywords": [
+        "capell",
+        "discovery",
+        "url-registry",
+        "cms"
+    ],
     "authors": [
         {
             "name": "Capell Team",

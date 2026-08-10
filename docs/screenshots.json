@@ -3,7 +3,9 @@
     "composerName": "capell-app/discovery-foundation",
     "generatedFor": "deployment-screenshot-runner",
     "requiresInstalledPackage": true,
+    "auditStatus": "visual-exempt",
+    "auditReason": "Discovery Foundation is a headless shared registry and diagnostics contract. Product-screen proof belongs to the installed packages that expose its discovery outputs through admin or frontend surfaces.",
     "outputDirectory": "packages/discovery-foundation/docs/screenshots",
     "entries": [],
-    "notes": "Authentic diagnostics and registry captures are deferred until the package can be installed in a clean host application."
+    "notes": "No package-owned visual surface is claimed. Consuming packages must provide authentic evidence for any UI that presents Discovery Foundation outputs."
 }

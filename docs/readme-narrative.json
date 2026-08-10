@@ -11,7 +11,7 @@
         "text": "First-party packages can contribute scoped, indexable URLs without duplicating registry or text-matching logic.",
         "evidence": [
             "src/Health/DiscoveryFoundationHealthCheck.php",
-                "src/Actions/DiscoverPublicPagesAction.php",
+            "src/Actions/DiscoverPublicPagesAction.php",
             "tests/Integration/Actions/BuildPublicUrlRegistryActionTest.php"
         ]
     },
