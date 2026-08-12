@@ -4,6 +4,7 @@
     "generatedFor": "deployment-screenshot-runner",
     "requiresInstalledPackage": true,
     "auditStatus": "visual-exempt",
+    "auditPolicy": "headless-no-visual-claims-v1",
     "auditReason": "Discovery Foundation is a headless shared registry and diagnostics contract. Product-screen proof belongs to the installed packages that expose its discovery outputs through admin or frontend surfaces.",
     "outputDirectory": "packages/discovery-foundation/docs/screenshots",
     "entries": [],

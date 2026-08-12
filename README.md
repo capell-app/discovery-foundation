@@ -4,62 +4,98 @@
 
 ## What This Plugin Adds
 
-Discovery Foundation is a free shared package that owns Capell's typed public URL registry, default CMS page contributor, and deterministic matching primitives.
+Discovery Foundation is an **Available**, **No schema impact** Capell package in the **Capell Foundation** product group. It ships as `capell-app/discovery-foundation` and extends these surfaces: shared.
 
-- Status: Beta
+Discovery Foundation provides the shared public URL registry and deterministic matching primitives used by Capell discovery features.
 
-Evidence: [`capell.json`](capell.json), [`src/Actions/BuildPublicUrlRegistryAction.php`](src/Actions/BuildPublicUrlRegistryAction.php), [`src/Actions/ScorePublicUrlCandidateAction.php`](src/Actions/ScorePublicUrlCandidateAction.php).
+First-party packages can contribute scoped, indexable URLs without duplicating registry or text-matching logic.
+
+Evidence: [`src/Actions/BuildPublicUrlRegistryAction.php`](src/Actions/BuildPublicUrlRegistryAction.php), [`src/Actions/ScorePublicUrlCandidateAction.php`](src/Actions/ScorePublicUrlCandidateAction.php), [`src/Contracts/PublicUrlContributor.php`](src/Contracts/PublicUrlContributor.php), [`src/Health/DiscoveryFoundationHealthCheck.php`](src/Health/DiscoveryFoundationHealthCheck.php), [`src/Actions/DiscoverPublicPagesAction.php`](src/Actions/DiscoverPublicPagesAction.php), [`tests/Integration/Actions/BuildPublicUrlRegistryActionTest.php`](tests/Integration/Actions/BuildPublicUrlRegistryActionTest.php).
+
+Status details:
+
+- Status: Available
+- Tier: free
+- Bundle: foundation
+- Composer package: `capell-app/discovery-foundation`
+- Namespace: `Capell\DiscoveryFoundation`
+- Theme key: not applicable
 
 ## Why It Matters
 
-**For developers:** One site and language scoped registry serves Search, Site Discovery, SEO Suite, and Smart 404.
+**For developers:** Typed contracts keep URL discovery neutral while compatibility shims let existing Site Discovery consumers migrate across the current major version.
 
-**For teams:** Consistent discovery works without analytics, AI providers, or public authoring data.
+**For teams:** Teams get consistent sitemap, search, SEO, and 404 discovery inputs without analytics, AI calls, or public authoring data.
 
-Evidence: [`src/Contracts/PublicUrlContributor.php`](src/Contracts/PublicUrlContributor.php), [`src/Providers/DiscoveryFoundationServiceProvider.php`](src/Providers/DiscoveryFoundationServiceProvider.php).
+Evidence: [`src/Data/PublicUrlRegistryEntryData.php`](src/Data/PublicUrlRegistryEntryData.php), [`src/Contracts/PublicUrlContributor.php`](src/Contracts/PublicUrlContributor.php), [`src/Actions/BuildPublicUrlRegistryAction.php`](src/Actions/BuildPublicUrlRegistryAction.php), [`src/Providers/DiscoveryFoundationServiceProvider.php`](src/Providers/DiscoveryFoundationServiceProvider.php).
 
 ## Screens And Workflow
 
-The authentic diagnostics and registry capture is deferred until this package can be installed in a clean host application. See [`docs/screenshots.json`](docs/screenshots.json).
+Docs gap: add `docs/screenshots.json` before promoting this package with visual workflow claims.
+
+- Admin index screen if the package has a Filament resource.
+- Create/edit screen if editors create records.
+- Settings/configuration screen when settings exist.
+- Frontend output when the package renders public pages.
+- Package detail or install intent screen when marketplace-owned.
 
 ## Technical Shape
 
-- Provider: `Capell\DiscoveryFoundation\Providers\DiscoveryFoundationServiceProvider`.
-- Actions: `BuildPublicUrlRegistryAction`, `DiscoverPublicPagesAction`, `NormalizeTextAction`, `NormalizeSearchTextAction`, `ResolveTypoCorrectionAction`, and `ScorePublicUrlCandidateAction`.
-- Contract: `Capell\DiscoveryFoundation\Contracts\PublicUrlContributor`.
-- No routes, migrations, settings, database tables, or external clients.
+- Service providers: `Capell\DiscoveryFoundation\Providers\DiscoveryFoundationServiceProvider`.
+- Extension contracts: `PublicUrlContributor`.
+- Actions: `BuildPublicUrlRegistryAction`, `DiscoverPublicPagesAction`, `NormalizeSearchTextAction`, `NormalizeTextAction`, `ReplacePhraseAction`, `ResolveTypoCorrectionAction`, `ScorePublicUrlCandidateAction`.
+- Data objects: `DiscoverablePageData`, `PublicUrlCandidateScoreData`, `PublicUrlData`, `PublicUrlRegistryEntryData`.
+- Manifest action API: `buildPublicUrlRegistry: Capell\DiscoveryFoundation\Actions\BuildPublicUrlRegistryAction`, `discoverPublicPages: Capell\DiscoveryFoundation\Actions\DiscoverPublicPagesAction`, `replacePhrase: Capell\DiscoveryFoundation\Actions\ReplacePhraseAction`.
+- Manifest contributions: `health-check: Capell\DiscoveryFoundation\Health\DiscoveryFoundationHealthCheck`.
+- Health checks: `Capell\DiscoveryFoundation\Health\DiscoveryFoundationHealthCheck`.
+- Cache tags: `discovery-foundation`.
 
 ## Data Model
 
-The package exposes immutable Data objects for contributed URLs, registry entries, discoverable pages, and candidate scores. Registry entries retain canonical URL, site, language, indexability, robots, sitemap, and title metadata.
+- Required tables: `pages`, `sites`, `site_domains`.
+- Migration impact: run host migrations through the package install flow before opening package surfaces.
+- Deletion/retention behaviour: Docs gap: migrations and manifest contributions do not prove a cascade, pruning command, or timed retention policy.
 
 ## Install Impact
 
-- Required package: `capell-app/core`.
-- Runtime registration: the default CMS page contributor is tagged for the foundation registry.
-- Public output: no package-owned route or Blade view.
-- Compatibility: Site Discovery forwarding classes remain available for the current major version.
+- Required packages: `capell-app/core`.
+- Admin navigation: no admin page or resource contribution is declared.
+- Admin/editor extensions: none declared.
+- Permissions: none declared in `capell.json`.
+- Public routes: none declared.
+- Database changes: no package migrations declared.
+- Config: no package config files.
+- Settings: no package settings declared.
+- Queues or schedules: none declared.
+- Cache tags: `discovery-foundation`.
+- Commands: none declared.
 
 ## Common Pitfalls
 
-- Contributors must return typed public URL data and remain site and language scoped.
-- Noindex entries stay authoritative when duplicate contributors disagree.
-- Do not expose authoring fields or package metadata through a public consumer.
+- Keep required Capell packages on compatible v4 releases: `capell-app/core`.
+- Custom write integrations must preserve invalidation for `discovery-foundation` cache tags.
 
 ## Troubleshooting
 
-If the health check cannot find the CMS contributor, confirm the foundation provider is installed and that the tagged contributor registry is booted before running discovery actions.
+| Symptom | Likely cause | Check | Fix |
+| --- | --- | --- | --- |
+| Package surface is missing after install | Provider or manifest is not loaded | Confirm `capell.json`, package `composer.json`, and provider registration | Reinstall the package, refresh Composer autoload, and clear host caches |
 
 ## Quick Start
 
-1. Require `capell-app/discovery-foundation` alongside the consuming extension.
-2. Register a contributor implementing `PublicUrlContributor` and tag it with `PublicUrlContributor::TAG`.
-3. Run `BuildPublicUrlRegistryAction` from the consuming feature.
+1. Install the package: `composer require capell-app/discovery-foundation`.
+2. No package-specific setup command or migrations are declared.
+3. Verify the package provider and manifest contributions are registered in the host app.
 
 ## Next Steps
 
 - [Package docs](docs/README.md)
 - [Overview](docs/overview.md)
+- [Troubleshooting](#troubleshooting)
 - [Screenshot contract](docs/screenshots.json)
+- [Capell content language plan](../../docs/CONTENT_LANGUAGE_PLAN.md)
+- [Capell documentation design system](../../docs/DESIGN_SYSTEM.md)
+- [Capell and package ERD notes](../../docs/erd/capell-and-package-erds.md)
+- Focused tests: `vendor/bin/pest packages/discovery-foundation/tests --configuration=phpunit.xml`.
 
 <!-- prettier-ignore-end -->
