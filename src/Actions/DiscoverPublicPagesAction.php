@@ -106,7 +106,7 @@ final class DiscoverPublicPagesAction
                 return new DiscoverablePageData(
                     pageId: $pageId,
                     title: trim(strip_tags($page->translation->title ?? $page->translation->label ?? $page->name ?? '')),
-                    url: $page->pageUrl->full_url ?? '',
+                    url: $pageUrl->full_url,
                     lastModified: $updatedAt instanceof CarbonInterface ? $updatedAt : null,
                     priority: is_numeric($page->meta['priority'] ?? null) ? (float) $page->meta['priority'] : null,
                     changeFrequency: is_string($page->meta['changefreq'] ?? null) ? $page->meta['changefreq'] : null,
