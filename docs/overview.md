@@ -10,8 +10,6 @@ Discovery Foundation provides the shared public URL registry and deterministic m
 
 First-party packages can contribute scoped, indexable URLs without duplicating registry or text-matching logic.
 
-Evidence: [`src/Actions/BuildPublicUrlRegistryAction.php`](../src/Actions/BuildPublicUrlRegistryAction.php), [`src/Actions/ScorePublicUrlCandidateAction.php`](../src/Actions/ScorePublicUrlCandidateAction.php), [`src/Contracts/PublicUrlContributor.php`](../src/Contracts/PublicUrlContributor.php), [`src/Health/DiscoveryFoundationHealthCheck.php`](../src/Health/DiscoveryFoundationHealthCheck.php), [`src/Actions/DiscoverPublicPagesAction.php`](../src/Actions/DiscoverPublicPagesAction.php), [`tests/Integration/Actions/BuildPublicUrlRegistryActionTest.php`](../tests/Integration/Actions/BuildPublicUrlRegistryActionTest.php).
-
 Status details:
 
 - Status: Available
@@ -26,8 +24,6 @@ Status details:
 **For developers:** Typed contracts keep URL discovery neutral while compatibility shims let existing Site Discovery consumers migrate across the current major version.
 
 **For teams:** Teams get consistent sitemap, search, SEO, and 404 discovery inputs without analytics, AI calls, or public authoring data.
-
-Evidence: [`src/Data/PublicUrlRegistryEntryData.php`](../src/Data/PublicUrlRegistryEntryData.php), [`src/Contracts/PublicUrlContributor.php`](../src/Contracts/PublicUrlContributor.php), [`src/Actions/BuildPublicUrlRegistryAction.php`](../src/Actions/BuildPublicUrlRegistryAction.php), [`src/Providers/DiscoveryFoundationServiceProvider.php`](../src/Providers/DiscoveryFoundationServiceProvider.php).
 
 ## Screens And Workflow
 
@@ -130,6 +126,5 @@ Docs gap: add `docs/screenshots.json` before promoting this package with visual 
 - [Capell content language plan](../../../docs/CONTENT_LANGUAGE_PLAN.md)
 - [Capell documentation design system](../../../docs/DESIGN_SYSTEM.md)
 - [Capell and package ERD notes](../../../docs/erd/capell-and-package-erds.md)
-- Focused tests: `vendor/bin/pest packages/discovery-foundation/tests --configuration=phpunit.xml`.
 
 <!-- prettier-ignore-end -->
