@@ -1,0 +1,40 @@
+{
+    "version": 3,
+    "package": "discovery-foundation",
+    "scenarios": {
+        "default": {
+            "source": {
+                "ref": "origin/main",
+                "commit": "646068b2d21e233ea517c342d62bc0eca1762192",
+                "providers": {
+                    "Providers/DiscoveryFoundationServiceProvider.php": "62211d89d2b984a59902baa843723f543c82f8684c72eadaedb2859bc251cdaa"
+                }
+            },
+            "disabledContributions": [],
+            "surfaces": {
+                "routes": [],
+                "livewire": [],
+                "filament": [],
+                "listeners": [],
+                "gates": [],
+                "policies": [],
+                "commands": [],
+                "view-namespaces": [],
+                "config-keys": [],
+                "migrations": []
+            },
+            "uninstalledSurfaces": {
+                "routes": [],
+                "livewire": [],
+                "filament": [],
+                "listeners": [],
+                "gates": [],
+                "policies": [],
+                "commands": [],
+                "view-namespaces": [],
+                "config-keys": [],
+                "migrations": []
+            }
+        }
+    }
+}
