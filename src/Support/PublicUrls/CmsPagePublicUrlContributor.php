@@ -12,6 +12,8 @@ use Capell\DiscoveryFoundation\Contracts\PublicUrlContributor;
 use Capell\DiscoveryFoundation\Data\DiscoverablePageData;
 use Capell\DiscoveryFoundation\Data\PublicUrlData;
 use Capell\DiscoveryFoundation\Enums\PublicUrlContentType;
+use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 final class CmsPagePublicUrlContributor implements PublicUrlContributor
@@ -21,9 +23,22 @@ final class CmsPagePublicUrlContributor implements PublicUrlContributor
      */
     public function publicUrls(): Collection
     {
+        // Page discovery depends only on site and language, so each pair is discovered once however many domains share it.
+        // Eager-loading the site's enabled domains lets each discovered page resolve its domain without a query per page.
         return SiteDomain::query()
-            ->with(['site', 'language'])
+            ->enabled()
+            ->whereHas('site', fn (Builder $query): Builder => $query->enabled())
+            ->whereHas('language', fn (Builder $query): Builder => $query->enabled())
+            ->with([
+                'language',
+                'site.siteDomains' => fn (BuilderContract $query): BuilderContract => $query
+                    ->enabled()
+                    ->whereHas('language', fn (Builder $query): Builder => $query->enabled())
+                    ->orderBy('id'),
+            ])
+            ->orderBy('id')
             ->get()
+            ->unique(fn (SiteDomain $domain): string => $domain->site_id . '|' . $domain->language_id)
             ->filter(fn (SiteDomain $domain): bool => $domain->site instanceof Site && $domain->language instanceof Language)
             ->flatMap(fn (SiteDomain $domain): Collection => $this->publicUrlsForDomain($domain))
             ->unique(fn (PublicUrlData $url): string => $this->modelIdentifier($url->site) . '|' . $this->modelIdentifier($url->language) . '|' . $url->canonicalUrl)

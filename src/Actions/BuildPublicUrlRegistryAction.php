@@ -37,7 +37,7 @@ final class BuildPublicUrlRegistryAction
             ->map(function (mixed $publicUrl): ?PublicUrlRegistryEntryData {
                 $data = $this->toPublicUrlData($publicUrl);
 
-                return $data instanceof PublicUrlData ? $this->normalize($data) : null;
+                return $data instanceof PublicUrlData && $this->isPublished($data) ? $this->normalize($data) : null;
             })
             ->filter(fn (?PublicUrlRegistryEntryData $entry): bool => $entry instanceof PublicUrlRegistryEntryData)
             ->reduce(function (Collection $registry, PublicUrlRegistryEntryData $entry): Collection {
@@ -97,6 +97,17 @@ final class BuildPublicUrlRegistryAction
             changeFrequency: is_string($publicUrl->changeFrequency ?? null) ? $publicUrl->changeFrequency : null,
             title: is_string($publicUrl->title ?? null) ? $publicUrl->title : null,
         );
+    }
+
+    /**
+     * A disabled site or language serves nothing, so no contributor may publish URLs for it. Enforced here so
+     * contributors that do not filter their own site enumeration cannot leak them. The status is compared directly
+     * because isEnabled() throws for an unsaved model whose status is unset.
+     */
+    private function isPublished(PublicUrlData $publicUrl): bool
+    {
+        return $publicUrl->site->getAttribute('status') !== false
+            && $publicUrl->language->getAttribute('status') !== false;
     }
 
     private function normalize(PublicUrlData $publicUrl): ?PublicUrlRegistryEntryData

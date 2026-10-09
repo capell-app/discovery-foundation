@@ -21,7 +21,7 @@ use Lorisleiva\Actions\Concerns\AsObject;
 use RuntimeException;
 
 /**
- * @method static Collection<int, DiscoverablePageData> run(Site $site, Language $language)
+ * @method static Collection<int, DiscoverablePageData> run(Site $site, Language $language, array<int, int>|null $pageIds = null)
  */
 final class DiscoverPublicPagesAction
 {
@@ -29,11 +29,22 @@ final class DiscoverPublicPagesAction
     use AsObject;
 
     /**
+     * @param  array<int, int>|null  $pageIds
      * @return Collection<int, DiscoverablePageData>
      */
-    public function handle(Site $site, Language $language): Collection
+    public function handle(Site $site, Language $language, ?array $pageIds = null): Collection
     {
+        // Compared directly rather than via isEnabled(), which throws for an unsaved model whose status is unset.
+        if ($site->getAttribute('status') === false || $language->getAttribute('status') === false || $pageIds === []) {
+            return collect();
+        }
+
         $query = Page::query();
+
+        if ($pageIds !== null) {
+            $query->whereKey($pageIds);
+        }
+
         $priority = CapellDatabase::for($query->getModel())->queryDialect()->jsonExtract(
             SqlFragment::raw($query->getQuery()->getGrammar()->wrap('pages.meta')),
             '$.priority',

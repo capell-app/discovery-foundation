@@ -182,3 +182,34 @@ it('deduplicates within site and language scope and merges duplicate eligibility
         ->and($merged?->isAiDiscoveryEligible)->toBeFalse()
         ->and($merged?->title)->toBe('About');
 });
+
+it('drops URLs for a disabled site or language whichever contributor supplies them', function (): void {
+    $disabledLanguage = (new Language)->forceFill(['id' => 2, 'code' => 'fr', 'status' => false]);
+    $disabledSite = (new Site)->forceFill(['id' => 2, 'language_id' => $this->language->getKey(), 'status' => false]);
+    $enabledSite = (new Site)->forceFill(['id' => 3, 'language_id' => $this->language->getKey(), 'status' => true]);
+    $urls = collect([
+        new PublicUrlData(canonicalUrl: 'https://unset-status.test/page', sourcePackage: 'capell-app/test', site: $this->site, language: $this->language),
+        new PublicUrlData(canonicalUrl: 'https://enabled.test/page', sourcePackage: 'capell-app/test', site: $enabledSite, language: $this->language),
+        new PublicUrlData(canonicalUrl: 'https://disabled-site.test/page', sourcePackage: 'capell-app/test', site: $disabledSite, language: $this->language),
+        new PublicUrlData(canonicalUrl: 'https://disabled-language.test/page', sourcePackage: 'capell-app/test', site: $enabledSite, language: $disabledLanguage),
+    ]);
+    $contributor = new readonly class($urls) implements PublicUrlContributor
+    {
+        /** @param Collection<int, PublicUrlData> $urls */
+        public function __construct(private Collection $urls) {}
+
+        /**
+         * @return Collection<int, PublicUrlData>
+         */
+        public function publicUrls(): Collection
+        {
+            return $this->urls;
+        }
+    };
+
+    app()->instance('discovery-foundation-disabled-site-contributor', $contributor);
+    app()->tag(['discovery-foundation-disabled-site-contributor'], PublicUrlContributor::TAG);
+
+    expect((new BuildPublicUrlRegistryAction)->handle()->pluck('canonicalUrl')->all())
+        ->toEqualCanonicalizing(['https://unset-status.test/page', 'https://enabled.test/page']);
+});
