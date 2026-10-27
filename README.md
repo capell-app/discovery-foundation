@@ -117,6 +117,10 @@ Docs gap: add `docs/screenshots.json` before promoting this package with visual 
 1. Install the package: `composer require capell-app/discovery-foundation`.
 2. Verify the package provider and manifest contributions are registered in the host app.
 
+## Upgrading
+
+No manual steps between minor versions.
+
 ## Next Steps
 
 - [Package docs](docs/README.md)

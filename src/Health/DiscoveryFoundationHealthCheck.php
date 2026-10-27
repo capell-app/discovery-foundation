@@ -30,6 +30,7 @@ final class DiscoveryFoundationHealthCheck implements ChecksExtensionHealth
                 ? (string) __('capell-discovery-foundation::package.health.public_urls.passed', ['count' => $contributors->count()])
                 : (string) __('capell-discovery-foundation::package.health.public_urls.failed'),
             remediation: $registered ? null : (string) __('capell-discovery-foundation::package.health.public_urls.remediation'),
+            id: 'legacy.discovery.foundation.public.url.contributors',
         )]);
     }
 
