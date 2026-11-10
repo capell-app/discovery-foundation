@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\DiscoveryFoundation\Actions;
 
+use Capell\Core\Actions\PublicRead\PageUrlsArePubliclyReadableAction;
 use Capell\Core\Data\Database\SqlFragment;
 use Capell\Core\Enums\BlueprintGroupEnum;
 use Capell\Core\Facades\CapellDatabase;
@@ -11,6 +12,7 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\PageUrl;
 use Capell\Core\Models\Site;
+use Capell\Core\Support\TableName;
 use Capell\DiscoveryFoundation\Data\DiscoverablePageData;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
@@ -46,15 +48,15 @@ final class DiscoverPublicPagesAction
         }
 
         $priority = CapellDatabase::for($query->getModel())->queryDialect()->jsonExtract(
-            SqlFragment::raw($query->getQuery()->getGrammar()->wrap('pages.meta')),
+            SqlFragment::raw($query->getQuery()->getGrammar()->wrap(TableName::resolve('pages') . '.meta')),
             '$.priority',
         );
-        (new SqlFragment(
+        new SqlFragment(
             $priority->sql . ' AS meta_priority',
             $priority->bindings,
-        ))->applySelect($query->getQuery());
+        )->applySelect($query->getQuery());
 
-        return $query->addSelect('pages.*')
+        $pages = $query->addSelect(TableName::resolve('pages') . '.*')
             ->with([
                 'translation' => fn (BuilderContract $query): BuilderContract => $query->where('language_id', $language->id),
                 'pageUrls' => fn (BuilderContract $query): BuilderContract => $query
@@ -85,20 +87,37 @@ final class DiscoverPublicPagesAction
             )
             ->where($query->qualifyColumn('site_id'), $site->id)
             ->where(
-                fn (Builder $query): Builder => $query->whereNull('pages.meta')
-                    ->orWhereJsonDoesntContain('pages.meta->hidden', true),
+                fn (Builder $query): Builder => $query->whereNull(TableName::resolve('pages') . '.meta')
+                    ->orWhereJsonDoesntContain(TableName::resolve('pages') . '.meta->hidden', true),
             )
             ->where(
-                fn (Builder $query): Builder => $query->whereNull('pages.meta->robots')
-                    ->orWhereJsonDoesntContain('pages.meta->robots', 'noindex'),
+                fn (Builder $query): Builder => $query->whereNull(TableName::resolve('pages') . '.meta->robots')
+                    ->orWhereJsonDoesntContain(TableName::resolve('pages') . '.meta->robots', 'noindex'),
             )
             ->publishedDate()
             ->ordered()
             ->get()
             ->filter(fn (Page $page): bool => ! $this->hasNoIndexDirective($page->meta ?? [])
-                && ! $this->hasNoIndexDirective($page->translation->meta ?? []))
-            ->map(function (Page $page) use ($site): ?DiscoverablePageData {
-                $pageUrl = $page->pageUrls->first();
+                && ! $this->hasNoIndexDirective($page->translation->meta ?? []));
+
+        // Publish only an address an anonymous visitor may read; a page behind a
+        // restricted route is left out of every discovery output. Every address
+        // is checked in one batch.
+        $candidates = $pages->flatMap(static fn (Page $page): array => $page->pageUrls->all())->values()->all();
+        $decisions = PageUrlsArePubliclyReadableAction::run($candidates);
+        $readable = [];
+
+        foreach ($candidates as $position => $candidate) {
+            if ($decisions[$position]) {
+                $readable[spl_object_id($candidate)] = true;
+            }
+        }
+
+        return $pages
+            ->map(function (Page $page) use ($site, $readable): ?DiscoverablePageData {
+                $pageUrl = $page->pageUrls->first(
+                    static fn (PageUrl $candidate): bool => isset($readable[spl_object_id($candidate)]),
+                );
 
                 if (! $pageUrl instanceof PageUrl) {
                     return null;

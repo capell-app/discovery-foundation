@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\DiscoveryFoundation\Actions;
 
+use Capell\Core\Data\PublicRead\PublicPageReadCandidateData;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
+use Capell\Core\Support\PublicRead\PublicPageReadEligibilityRegistry;
 use Capell\DiscoveryFoundation\Contracts\PublicUrlContributor;
 use Capell\DiscoveryFoundation\Data\PublicUrlData;
 use Capell\DiscoveryFoundation\Data\PublicUrlRegistryEntryData;
@@ -40,6 +42,8 @@ final class BuildPublicUrlRegistryAction
                 return $data instanceof PublicUrlData && $this->isPublished($data) ? $this->normalize($data) : null;
             })
             ->filter(fn (?PublicUrlRegistryEntryData $entry): bool => $entry instanceof PublicUrlRegistryEntryData)
+            ->values()
+            ->pipe(fn (Collection $entries): Collection => $this->publiclyReadable($entries))
             ->reduce(function (Collection $registry, PublicUrlRegistryEntryData $entry): Collection {
                 $key = $this->registryKey($entry);
                 $existingEntry = $registry->get($key);
@@ -51,6 +55,27 @@ final class BuildPublicUrlRegistryAction
                 return $registry;
             }, collect())
             ->values();
+    }
+
+    /**
+     * Contributors list URLs from their own models, so a URL served behind a
+     * restricted route is withheld here for every registry consumer. Every
+     * URL is checked in one batch.
+     *
+     * @param  Collection<int, PublicUrlRegistryEntryData>  $entries
+     * @return Collection<int, PublicUrlRegistryEntryData>
+     */
+    private function publiclyReadable(Collection $entries): Collection
+    {
+        $decisions = resolve(PublicPageReadEligibilityRegistry::class)->allowsMany(array_values($entries->map(
+            static fn (PublicUrlRegistryEntryData $entry): PublicPageReadCandidateData => new PublicPageReadCandidateData(
+                url: $entry->canonicalUrl,
+                siteId: $entry->siteId,
+                languageId: $entry->languageId,
+            ),
+        )->all()));
+
+        return $entries->filter(static fn (PublicUrlRegistryEntryData $entry, int $position): bool => $decisions[$position])->values();
     }
 
     private function toPublicUrlData(mixed $publicUrl): ?PublicUrlData

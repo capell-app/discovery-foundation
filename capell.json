@@ -2,13 +2,13 @@
     "manifest-version": 3,
     "name": "capell-app/discovery-foundation",
     "slug": "discovery-foundation",
-    "displayName": "Discovery Foundation",
+    "displayName": "Discovery Core",
     "kind": "package",
     "capellApiVersion": "^1.0",
     "version": "1.0.0",
     "description": "A free shared public URL registry and deterministic matching foundation for Capell discovery features.",
     "product": {
-        "group": "Capell Foundation",
+        "group": "Capell Essentials",
         "tier": "free",
         "bundle": "foundation"
     },
@@ -102,7 +102,7 @@
     "healthChecks": [
         {
             "key": "discovery-foundation.public-url-contributors",
-            "label": "Discovery Foundation public URL contributors are registered.",
+            "label": "Discovery Core public URL contributors are registered.",
             "class": "Capell\\DiscoveryFoundation\\Health\\DiscoveryFoundationHealthCheck",
             "severity": "critical",
             "surface": "shared"
@@ -115,8 +115,24 @@
         "privateDocsRequested": false
     },
     "marketplace": {
-        "summary": "Shared public URL registry and deterministic discovery matching for Capell.",
-        "description": "Discovery Foundation provides the neutral public URL registry used by sitemaps, search, SEO, and Smart 404. It scopes URLs by site and language, keeps noindex state authoritative, and exposes deterministic text matching without a database, analytics, or external service.",
+        "summary": "The shared public URL registry that sitemaps, search, SEO and Smart 404 build on. A dependency with no screens of its own.",
+        "description": "Discovery Core provides the neutral public URL registry used by sitemaps, search, SEO, and Smart 404. It scopes URLs by site and language, keeps noindex state authoritative, and exposes deterministic text matching without a database, analytics, or external service. It adds no screens, so it is installed as a requirement of those packages.",
+        "problem": "Developers building discovery features can end up duplicating public URL matching logic.",
+        "outcome": "A site has shared discovery primitives available to packages that contribute public URLs.",
+        "faq": [
+            {
+                "question": "What information can packages contribute?",
+                "answer": "First-party packages can contribute scoped, indexable URLs to the shared registry."
+            },
+            {
+                "question": "Does this provide a discovery screen?",
+                "answer": "No admin or frontend surface is declared for this shared package."
+            },
+            {
+                "question": "How does matching remain consistent?",
+                "answer": "The package supplies deterministic text-matching primitives for discovery features."
+            }
+        ],
         "screenshots": [],
         "categories": ["foundation", "search-seo"]
     },

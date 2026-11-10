@@ -1,6 +1,6 @@
 {
     "whatThisPluginAdds": {
-        "text": "Discovery Foundation provides the shared public URL registry and deterministic matching primitives used by Capell discovery features.",
+        "text": "Discovery Core provides the shared public URL registry and deterministic matching primitives used by Capell discovery features.",
         "evidence": [
             "src/Actions/BuildPublicUrlRegistryAction.php",
             "src/Actions/ScorePublicUrlCandidateAction.php",
