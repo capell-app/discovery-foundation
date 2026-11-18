@@ -2,11 +2,11 @@
     "manifest-version": 3,
     "name": "capell-app/discovery-foundation",
     "slug": "discovery-foundation",
-    "displayName": "Discovery Core",
+    "displayName": "Discovery Foundation",
     "kind": "package",
     "capellApiVersion": "^1.0",
     "version": "1.0.0",
-    "description": "A free shared public URL registry and deterministic matching foundation for Capell discovery features.",
+    "description": "A shared list of each site's public pages, so search, 404 suggestions and other packages that read it agree on what visitors can see.",
     "product": {
         "group": "Capell Essentials",
         "tier": "free",
@@ -53,7 +53,7 @@
     },
     "settings": [],
     "permissions": [],
-    "capabilities": ["public-url-registry", "discovery-matching"],
+    "capabilities": ["public-url-registry"],
     "security": {
         "riskTier": "low",
         "publicSurface": {
@@ -102,7 +102,7 @@
     "healthChecks": [
         {
             "key": "discovery-foundation.public-url-contributors",
-            "label": "Discovery Core public URL contributors are registered.",
+            "label": "Discovery Foundation public URL contributors are registered.",
             "class": "Capell\\DiscoveryFoundation\\Health\\DiscoveryFoundationHealthCheck",
             "severity": "critical",
             "surface": "shared"
@@ -115,22 +115,26 @@
         "privateDocsRequested": false
     },
     "marketplace": {
-        "summary": "The shared public URL registry that sitemaps, search, SEO and Smart 404 build on. A dependency with no screens of its own.",
-        "description": "Discovery Core provides the neutral public URL registry used by sitemaps, search, SEO, and Smart 404. It scopes URLs by site and language, keeps noindex state authoritative, and exposes deterministic text matching without a database, analytics, or external service. It adds no screens, so it is installed as a requirement of those packages.",
-        "problem": "Developers building discovery features can end up duplicating public URL matching logic.",
-        "outcome": "A site has shared discovery primitives available to packages that contribute public URLs.",
+        "summary": "Builds one list of public web addresses per site and language, leaving out hidden, restricted and search-excluded pages.",
+        "description": "A building block that other Capell packages install for you. It gathers the public web addresses of a site into one list, per site and language, so packages that read it get the same answer about what visitors can reach. Hidden pages, restricted pages and pages marked to stay out of search results are left off. It has no admin screens and nothing for editors to set up, and it works without an outside service.",
+        "problem": "My search, 404 suggestions and site checks could disagree about which pages are public.",
+        "outcome": "Every package that reads the list gets the same answer about what is public.",
         "faq": [
             {
-                "question": "What information can packages contribute?",
-                "answer": "First-party packages can contribute scoped, indexable URLs to the shared registry."
+                "question": "Do I have to install Discovery Foundation myself?",
+                "answer": "No. It comes along with the packages that need it, such as Search and Site Discovery, and you never open or configure it."
             },
             {
-                "question": "Does this provide a discovery screen?",
-                "answer": "No admin or frontend surface is declared for this shared package."
+                "question": "Does it give my site a sitemap or a search page?",
+                "answer": "No. It has no screens, settings or buttons and no sitemap or search results of its own. It only keeps the shared list of public addresses that other packages read."
             },
             {
-                "question": "How does matching remain consistent?",
-                "answer": "The package supplies deterministic text-matching primitives for discovery features."
+                "question": "Which pages are left off the list of public addresses?",
+                "answer": "A published page is left off if it's hidden, set to ask search engines not to list it, or open only to signed-in visitors. Disabled sites and languages never appear."
+            },
+            {
+                "question": "Does it contact an outside service or store anything of its own?",
+                "answer": "No. It has no outside service and no database tables of its own. It builds the list from your pages whenever another package asks for it."
             }
         ],
         "screenshots": [],

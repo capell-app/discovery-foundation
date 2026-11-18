@@ -1,0 +1,58 @@
+[
+    {
+        "claim": "Other packages, such as Search and Site Discovery, need to agree on which of your pages are public, and this package keeps the one list they all read.",
+        "evidence": [
+            "src/Actions/BuildPublicUrlRegistryAction.php",
+            "src/Contracts/PublicUrlContributor.php"
+        ]
+    },
+    {
+        "claim": "It comes along with those packages when they are installed.",
+        "evidence": ["capell.json", "composer.json"]
+    },
+    {
+        "claim": "Discovery Foundation builds a shared list of your public web addresses, separate for each site and language, whenever another package asks for it.",
+        "evidence": [
+            "src/Actions/BuildPublicUrlRegistryAction.php",
+            "src/Data/PublicUrlRegistryEntryData.php"
+        ]
+    },
+    {
+        "claim": "A published page is left off the list if it's hidden, set to ask search engines not to list it or open only to signed-in visitors.",
+        "evidence": [
+            "src/Actions/DiscoverPublicPagesAction.php",
+            "src/Support/PublicUrls/CmsPagePublicUrlContributor.php"
+        ]
+    },
+    {
+        "claim": "Disabled sites and languages never appear.",
+        "evidence": [
+            "src/Actions/BuildPublicUrlRegistryAction.php",
+            "src/Actions/DiscoverPublicPagesAction.php",
+            "src/Support/PublicUrls/CmsPagePublicUrlContributor.php"
+        ]
+    },
+    {
+        "claim": "Other packages can add their own addresses to the list, and every address is checked again before it goes in.",
+        "evidence": [
+            "src/Contracts/PublicUrlContributor.php",
+            "src/Actions/BuildPublicUrlRegistryAction.php"
+        ]
+    },
+    {
+        "claim": "It has no screens or settings of its own.",
+        "evidence": [
+            "capell.json",
+            "composer.json",
+            "src/Providers/DiscoveryFoundationServiceProvider.php"
+        ]
+    },
+    {
+        "claim": "Small helpers for search text come with it, including tidying spaces and correcting a typed word to its nearest match.",
+        "evidence": [
+            "src/Actions/NormalizeSearchTextAction.php",
+            "src/Actions/NormalizeTextAction.php",
+            "src/Actions/ResolveTypoCorrectionAction.php"
+        ]
+    }
+]

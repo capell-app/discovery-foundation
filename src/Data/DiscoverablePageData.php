@@ -18,5 +18,6 @@ final class DiscoverablePageData extends Data
         public readonly ?float $priority = null,
         public readonly ?string $changeFrequency = null,
         public readonly ?Page $page = null,
+        public readonly ?string $bodyText = null,
     ) {}
 }

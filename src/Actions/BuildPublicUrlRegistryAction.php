@@ -121,6 +121,7 @@ final class BuildPublicUrlRegistryAction
             priority: is_string($publicUrl->priority ?? null) ? $publicUrl->priority : null,
             changeFrequency: is_string($publicUrl->changeFrequency ?? null) ? $publicUrl->changeFrequency : null,
             title: is_string($publicUrl->title ?? null) ? $publicUrl->title : null,
+            bodyText: is_string($publicUrl->bodyText ?? null) ? $publicUrl->bodyText : null,
         );
     }
 
@@ -165,6 +166,7 @@ final class BuildPublicUrlRegistryAction
             priority: $this->normalizeOptionalString($publicUrl->priority),
             changeFrequency: $this->normalizeOptionalString($publicUrl->changeFrequency),
             title: $this->normalizeOptionalString($publicUrl->title),
+            bodyText: $this->normalizeOptionalString($publicUrl->bodyText),
         );
     }
 
@@ -235,6 +237,7 @@ final class BuildPublicUrlRegistryAction
             priority: $existingEntry->priority,
             changeFrequency: $existingEntry->changeFrequency,
             title: $existingEntry->title ?? $duplicateEntry->title,
+            bodyText: $existingEntry->bodyText ?? $duplicateEntry->bodyText,
         );
     }
 

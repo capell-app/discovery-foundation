@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\DiscoveryFoundation\Actions;
 
+use Capell\Core\Actions\Content\ExtractTextContentAction;
 use Capell\Core\Actions\PublicRead\PageUrlsArePubliclyReadableAction;
 use Capell\Core\Data\Database\SqlFragment;
 use Capell\Core\Enums\BlueprintGroupEnum;
@@ -12,6 +13,7 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\PageUrl;
 use Capell\Core\Models\Site;
+use Capell\Core\Models\SiteDomain;
 use Capell\Core\Support\TableName;
 use Capell\DiscoveryFoundation\Data\DiscoverablePageData;
 use Carbon\CarbonInterface;
@@ -23,18 +25,21 @@ use Lorisleiva\Actions\Concerns\AsObject;
 use RuntimeException;
 
 /**
- * @method static Collection<int, DiscoverablePageData> run(Site $site, Language $language, array<int, int>|null $pageIds = null)
+ * @method static Collection<int, DiscoverablePageData> run(Site $site, Language $language, array<int, int>|null $pageIds = null, ?SiteDomain $publishingDomain = null)
  */
 final class DiscoverPublicPagesAction
 {
     use AsFake;
     use AsObject;
 
+    private const int BODY_TEXT_LIMIT = 1000;
+
     /**
      * @param  array<int, int>|null  $pageIds
+     * @param  SiteDomain|null  $publishingDomain  the domain the output is served from; every address is built, and judged for public readability, on it
      * @return Collection<int, DiscoverablePageData>
      */
-    public function handle(Site $site, Language $language, ?array $pageIds = null): Collection
+    public function handle(Site $site, Language $language, ?array $pageIds = null, ?SiteDomain $publishingDomain = null): Collection
     {
         // Compared directly rather than via isEnabled(), which throws for an unsaved model whose status is unset.
         if ($site->getAttribute('status') === false || $language->getAttribute('status') === false || $pageIds === []) {
@@ -59,15 +64,16 @@ final class DiscoverPublicPagesAction
         $pages = $query->addSelect(TableName::resolve('pages') . '.*')
             ->with([
                 'translation' => fn (BuilderContract $query): BuilderContract => $query->where('language_id', $language->id),
+                // Every language's address travels with the page: the sitemap's hreflang cluster needs them.
                 'pageUrls' => fn (BuilderContract $query): BuilderContract => $query
-                    ->where('language_id', $language->id)
                     ->where('status', true)
                     ->whereNull('type'),
                 'pageUrls.language',
                 'pageUrls.siteDomain',
                 'translations',
             ])
-            ->withWhereHas(
+            // whereHas, not withWhereHas: its constraint would also narrow the eager load above to one language.
+            ->whereHas(
                 'pageUrls',
                 fn (BuilderContract $query): BuilderContract => $query
                     ->where('language_id', $language->id)
@@ -103,7 +109,28 @@ final class DiscoverPublicPagesAction
         // Publish only an address an anonymous visitor may read; a page behind a
         // restricted route is left out of every discovery output. Every address
         // is checked in one batch.
-        $candidates = $pages->flatMap(static fn (Page $page): array => $page->pageUrls->all())->values()->all();
+        $candidates = $pages->flatMap(static fn (Page $page): array => $page->pageUrls->filter(static fn (PageUrl $pageUrl): bool => $pageUrl->language_id === $language->id)->all())->values()->all();
+
+        // The default-domain match is only a fallback: the output is served from, and judged on, the publishing domain.
+        // Either way the address is settled before it is judged, so the page is published and checked at the same URL.
+        foreach ($pages as $page) {
+            foreach ($page->pageUrls as $candidate) {
+                if ($candidate->language_id !== $language->id) {
+                    continue;
+                }
+
+                if ($publishingDomain instanceof SiteDomain) {
+                    $candidate->setRelation('siteDomain', $publishingDomain);
+
+                    continue;
+                }
+
+                $page->setRelation('pageUrl', $candidate);
+                $page->setRelation('site', $site);
+                Page::setResolvedPageUrlSiteDomain($page, $site);
+            }
+        }
+
         $decisions = PageUrlsArePubliclyReadableAction::run($candidates);
         $readable = [];
 
@@ -114,7 +141,7 @@ final class DiscoverPublicPagesAction
         }
 
         return $pages
-            ->map(function (Page $page) use ($site, $readable): ?DiscoverablePageData {
+            ->map(function (Page $page) use ($site, $readable, $publishingDomain): ?DiscoverablePageData {
                 $pageUrl = $page->pageUrls->first(
                     static fn (PageUrl $candidate): bool => isset($readable[spl_object_id($candidate)]),
                 );
@@ -126,6 +153,11 @@ final class DiscoverPublicPagesAction
                 $page->setRelation('pageUrl', $pageUrl);
                 $page->setRelation('site', $site);
                 Page::setResolvedPageUrlSiteDomain($page, $site);
+
+                if ($publishingDomain instanceof SiteDomain) {
+                    $pageUrl->setRelation('siteDomain', $publishingDomain);
+                }
+
                 $pageId = $page->getKey();
                 $updatedAt = $page->getAttribute('updated_at');
 
@@ -141,11 +173,28 @@ final class DiscoverPublicPagesAction
                     priority: is_numeric($page->meta['priority'] ?? null) ? (float) $page->meta['priority'] : null,
                     changeFrequency: is_string($page->meta['changefreq'] ?? null) ? $page->meta['changefreq'] : null,
                     page: $page,
+                    bodyText: $this->bodyText($page),
                 );
             })
             ->filter(fn (?DiscoverablePageData $page): bool => $page instanceof DiscoverablePageData)
             ->filter(fn (DiscoverablePageData $page): bool => $page->url !== '')
             ->values();
+    }
+
+    /**
+     * Visible text of a page that is already public, bounded so a large site's registry stays small.
+     */
+    private function bodyText(Page $page): ?string
+    {
+        $content = $page->translation->content ?? null;
+
+        if (! is_string($content) && ! is_array($content)) {
+            return null;
+        }
+
+        $text = trim(ExtractTextContentAction::run($content, self::BODY_TEXT_LIMIT));
+
+        return $text === '' ? null : $text;
     }
 
     /**

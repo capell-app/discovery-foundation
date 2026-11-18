@@ -32,5 +32,6 @@ final class PublicUrlRegistryEntryData extends Data
         public readonly ?string $priority = null,
         public readonly ?string $changeFrequency = null,
         public readonly ?string $title = null,
+        public readonly ?string $bodyText = null,
     ) {}
 }

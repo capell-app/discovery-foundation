@@ -1,28 +1,26 @@
-# Discovery Core
+# Discovery Foundation
 
 <!-- prettier-ignore-start -->
 
-## What It Does
+Other packages, such as Search and Site Discovery, need to agree on which of your pages are public, and this package keeps the one list they all read. It comes along with those packages when they are installed.
 
-Discovery Core provides the shared public URL registry and deterministic matching primitives used by Capell discovery features.
+Discovery Foundation builds a shared list of your public web addresses, separate for each site and language, whenever another package asks for it. A published page is left off the list if it's hidden, set to ask search engines not to list it or open only to signed-in visitors. Disabled sites and languages never appear. Other packages can add their own addresses to the list, and every address is checked again before it goes in.
+
+It has no screens or settings of its own. Small helpers for search text come with it, including tidying spaces and correcting a typed word to its nearest match.
 
 - **Price and availability:** Check current availability and price on the [Capell Marketplace listing](https://capell.app/extensions/discovery-foundation).
 - **Licence:** Check the licence terms on the [Capell Marketplace listing](https://capell.app/extensions/discovery-foundation).
 - **Requires:** `PHP ^8.4`, `capell-app/core ^1.0.76`, `lorisleiva/laravel-actions ^2.8`, `spatie/laravel-data ^4.5`, `spatie/laravel-package-tools ^1.14.1`.
 - **Install:** `composer require capell-app/discovery-foundation`.
 
-First-party packages can contribute scoped, indexable URLs without duplicating registry or text-matching logic.
-
-## Who It Is For
-
-**For developers:** Typed contracts keep URL discovery neutral while compatibility shims let existing Site Discovery consumers migrate across the current major version.
-
-**For teams:** Teams get consistent sitemap, search, SEO, and 404 discovery inputs without analytics, AI calls, or public authoring data.
-
 ## Quick Start
 
 1. Install the package: `composer require capell-app/discovery-foundation`.
 2. Verify the package provider and manifest contributions are registered in the host app.
+
+## For Developers
+
+Typed contracts keep URL discovery neutral while compatibility shims let existing Site Discovery consumers migrate across the current major version.
 
 ## Configure
 

@@ -1,6 +1,6 @@
 {
     "name": "capell-app/discovery-foundation",
-    "description": "Shared public URL registry and deterministic discovery matching primitives for Capell.",
+    "description": "Shared list of public web addresses per site and language, used by Capell search and discovery packages.",
     "type": "library",
     "license": "proprietary",
     "require": {

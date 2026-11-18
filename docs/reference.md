@@ -1,4 +1,4 @@
-# Discovery Core reference
+# Discovery Foundation reference
 
 <!-- prettier-ignore-start -->
 
@@ -6,7 +6,7 @@ Developer reference for `capell-app/discovery-foundation`. Start with the [READM
 
 ## Package Details
 
-Discovery Core is an **Available**, **No schema impact** Capell package in the **Capell Essentials** product group. It ships as `capell-app/discovery-foundation` and extends these surfaces: shared.
+Discovery Foundation is an **Available** Capell package in the **Capell Essentials** product group. It ships as `capell-app/discovery-foundation` and extends these surfaces: shared.
 
 - Status: Available
 - Tier: free

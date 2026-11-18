@@ -71,6 +71,7 @@ final class CmsPagePublicUrlContributor implements PublicUrlContributor
                 priority: is_numeric($page->priority) ? number_format((float) $page->priority, 1, '.', '') : null,
                 changeFrequency: $page->changeFrequency,
                 title: $page->title,
+                bodyText: $page->bodyText,
             ));
     }
 

@@ -213,3 +213,27 @@ it('drops URLs for a disabled site or language whichever contributor supplies th
     expect((new BuildPublicUrlRegistryAction)->handle()->pluck('canonicalUrl')->all())
         ->toEqualCanonicalizing(['https://unset-status.test/page', 'https://enabled.test/page']);
 });
+
+it('carries a contributor\'s page body text into the registry entry, trimmed and blank-safe', function (): void {
+    $contributor = new readonly class(collect([new PublicUrlData(canonicalUrl: 'https://example.test/a', sourcePackage: 'capell-app/test', site: $this->site, language: $this->language, bodyText: '  Quarterly invoicing guide  '), new PublicUrlData(canonicalUrl: 'https://example.test/b', sourcePackage: 'capell-app/test', site: $this->site, language: $this->language, bodyText: '   ')])) implements PublicUrlContributor
+    {
+        /** @param Collection<int, PublicUrlData> $urls */
+        public function __construct(private Collection $urls) {}
+
+        /**
+         * @return Collection<int, PublicUrlData>
+         */
+        public function publicUrls(): Collection
+        {
+            return $this->urls;
+        }
+    };
+
+    app()->instance('discovery-foundation-body-text-contributor', $contributor);
+    app()->tag(['discovery-foundation-body-text-contributor'], PublicUrlContributor::TAG);
+
+    $entries = (new BuildPublicUrlRegistryAction)->handle()->keyBy('canonicalUrl');
+
+    expect($entries['https://example.test/a']?->bodyText)->toBe('Quarterly invoicing guide')
+        ->and($entries['https://example.test/b']?->bodyText)->toBeNull();
+});
