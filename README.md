@@ -8,8 +8,8 @@ Discovery Foundation builds a shared list of your public web addresses, separate
 
 It has no screens or settings of its own. Small helpers for search text come with it, including tidying spaces and correcting a typed word to its nearest match.
 
-- **Price and availability:** Check current availability and price on the [Capell Marketplace listing](https://capell.app/extensions/discovery-foundation).
-- **Licence:** Check the licence terms on the [Capell Marketplace listing](https://capell.app/extensions/discovery-foundation).
+- **Price and availability:** Check current availability and price on the [Capell Marketplace listing](https://capell.app/marketplace/extensions/discovery-foundation).
+- **Licence:** Check the licence terms on the [Capell Marketplace listing](https://capell.app/marketplace/extensions/discovery-foundation).
 - **Requires:** `PHP ^8.4`, `capell-app/core ^1.0.76`, `lorisleiva/laravel-actions ^2.8`, `spatie/laravel-data ^4.5`, `spatie/laravel-package-tools ^1.14.1`.
 - **Install:** `composer require capell-app/discovery-foundation`.
 
