@@ -6,6 +6,7 @@
     "kind": "package",
     "capellApiVersion": "^1.0",
     "version": "1.0.0",
+    "launchStatus": "shipped",
     "description": "A shared list of each site's public pages, so search, 404 suggestions and other packages that read it agree on what visitors can see.",
     "product": {
         "group": "Capell Essentials",
